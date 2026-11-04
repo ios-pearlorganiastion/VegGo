@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import Sidebar from '../../../layouts/Sidebar';
 import PageHeader from '../../../components/common/PageHeader';
 import { getAdminDashboard } from '../services/dashboardService';
@@ -16,7 +16,7 @@ import {
   Sparkles
 } from 'lucide-react';
 
-function AnimatedValue({ value, prefix = '', suffix = '' }) {
+const AnimatedValue = React.memo(function AnimatedValue({ value, prefix = '', suffix = '' }) {
   if (value === null || value === undefined || value === '') {
     return <span>{prefix}0{suffix}</span>;
   }
@@ -25,7 +25,7 @@ function AnimatedValue({ value, prefix = '', suffix = '' }) {
     return <span>{prefix}{String(value)}{suffix}</span>;
   }
   return <span>{prefix}{targetNum.toLocaleString('en-IN')}{suffix}</span>;
-}
+});
 
 const formatDisplayText = (value) => {
   if (!value) return 'N/A';
@@ -64,7 +64,6 @@ export default function Dashboard() {
     }
     setError(null);
 
-    const startTime = Date.now();
     try {
       const response = await getAdminDashboard();
       const payload = response?.data !== undefined ? response.data : response;
@@ -80,11 +79,6 @@ export default function Dashboard() {
       console.error('Failed to load admin dashboard:', err);
       setError(getErrorMessage(err));
     } finally {
-      const elapsed = Date.now() - startTime;
-      const minDuration = 400;
-      if (elapsed < minDuration) {
-        await new Promise((resolve) => setTimeout(resolve, minDuration - elapsed));
-      }
       setLoading(false);
       setIsRefreshing(false);
     }
@@ -101,7 +95,7 @@ export default function Dashboard() {
     systemStatus.toLowerCase() === 'up';
 
   // Metrics list powered by soft light pastel theme tokens
-  const metrics = [
+  const metrics = useMemo(() => [
     {
       id: 'customers',
       label: 'Registered Customers',
@@ -140,7 +134,7 @@ export default function Dashboard() {
       theme: DASHBOARD_METRIC_THEMES.ENVIRONMENT,
       status: 'Live Cluster',
     }
-  ];
+  ], [loading, totalCustomers, totalUsers, systemStatus, environment, isHealthy]);
 
   return (
     <div className="min-h-dvh bg-[#f6f9f7] flex flex-col lg:flex-row font-sans antialiased text-slate-800 selection:bg-emerald-100 selection:text-emerald-900">
@@ -285,7 +279,7 @@ export default function Dashboard() {
               </thead>
 
               <tbody className="divide-y divide-slate-100/80">
-                {metrics.map((item, idx) => {
+                {metrics.map((item) => {
                   const Icon = item.icon;
                   const theme = item.theme;
 

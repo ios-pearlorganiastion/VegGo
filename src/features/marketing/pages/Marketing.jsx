@@ -1,10 +1,12 @@
+import { lazy, Suspense } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Sidebar from '../../../layouts/Sidebar';
 import SegmentedTabs from '../../../components/common/SegmentedTabs';
 import { ROUTES } from '../../../constants/routes.constants';
 import { Ticket, Image as ImageIcon } from 'lucide-react';
-import Coupons from './Coupons';
-import Banners from './Banners';
+
+const Coupons = lazy(() => import('./Coupons'));
+const Banners = lazy(() => import('./Banners'));
 
 const TAB_ROUTES = {
   coupons: ROUTES.COUPONS,
@@ -32,8 +34,16 @@ export default function Marketing({ defaultTab = 'coupons' }) {
           />
         </div>
 
-        {defaultTab === 'coupons' && <Coupons />}
-        {defaultTab === 'banners' && <Banners />}
+        {defaultTab === 'coupons' && (
+          <Suspense fallback={<div className="py-16 text-center text-slate-400 font-semibold text-xs">Loading coupons...</div>}>
+            <Coupons />
+          </Suspense>
+        )}
+        {defaultTab === 'banners' && (
+          <Suspense fallback={<div className="py-16 text-center text-slate-400 font-semibold text-xs">Loading banners...</div>}>
+            <Banners />
+          </Suspense>
+        )}
       </main>
     </div>
   );

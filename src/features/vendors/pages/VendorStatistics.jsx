@@ -17,82 +17,73 @@ import {
   ArrowRight
 } from 'lucide-react';
 
-function AnimatedValue({ value }) {
-  return <span>{value ?? ''}</span>;
-}
+const VENDOR_STATS = [
+  { 
+    label: 'Total Active Vendors', 
+    value: '248', 
+    change: '+12.5%', 
+    up: true,
+    accentColor: 'bg-emerald-600',
+    iconBg: 'bg-emerald-50 text-emerald-700',
+    tagColor: 'text-emerald-700 bg-emerald-50/80 border-emerald-200/80',
+    icon: Store
+  },
+  { 
+    label: 'Avg Vendor Rating', 
+    value: '4.85', 
+    change: '+0.4%', 
+    up: true,
+    accentColor: 'bg-teal-600',
+    iconBg: 'bg-teal-50 text-teal-700',
+    tagColor: 'text-teal-700 bg-teal-50/80 border-teal-200/80',
+    icon: Star
+  },
+  { 
+    label: 'Total Orders Handled', 
+    value: '18,420', 
+    change: '+22.1%', 
+    up: true,
+    accentColor: 'bg-emerald-500',
+    iconBg: 'bg-emerald-50 text-emerald-700',
+    tagColor: 'text-emerald-700 bg-emerald-50/80 border-emerald-200/80',
+    icon: ShoppingBag
+  },
+  { 
+    label: 'Order Fulfillment Rate', 
+    value: '96.8%', 
+    change: '-0.5%', 
+    up: false,
+    accentColor: 'bg-green-700',
+    iconBg: 'bg-green-50 text-green-700',
+    tagColor: 'text-rose-700 bg-rose-50/80 border-rose-200/80',
+    icon: Users
+  }
+];
+
+const VENDOR_CATEGORIES = [
+  { source: 'Organic Produce', amount: '112 Vendors', share: '45.1%', status: 'Active', trendUp: true, percentage: 45.1 },
+  { source: 'Dairy & Poultry', amount: '58 Vendors', share: '23.3%', status: 'Growing', trendUp: true, percentage: 23.3 },
+  { source: 'Hydroponics & Exotic', amount: '42 Vendors', share: '16.9%', status: 'Stable', trendUp: false, percentage: 16.9 },
+  { source: 'Herbs & Spices', amount: '36 Vendors', share: '14.7%', status: 'Stable', trendUp: true, percentage: 14.7 }
+];
+
+const TOP_VENDORS = [
+  { id: 'VND-1021', name: 'Organic Valley Farms', category: 'Organic Produce', orders: '1,420', rating: '4.9', sales: '₹1,24,800.00', status: 'Active' },
+  { id: 'VND-1022', name: 'Greenhouse Co-op', category: 'Hydroponics', orders: '980', rating: '4.8', sales: '₹83,205.00', status: 'Active' },
+  { id: 'VND-1023', name: 'Sunshine Orchards', category: 'Fruits', orders: '1,150', rating: '4.7', sales: '₹1,51,000.00', status: 'Active' },
+  { id: 'VND-1024', name: 'Purely Plants Co.', category: 'Herbs & Spices', orders: '410', rating: '4.5', sales: '₹48,900.00', status: 'Pending Review' },
+  { id: 'VND-1025', name: 'Evergreen Hydroponics', category: 'Hydroponics', orders: '870', rating: '4.9', sales: '₹91,500.00', status: 'Active' },
+  { id: 'VND-1026', name: 'Valley Herbals LLC', category: 'Herbs', orders: '310', rating: '4.6', sales: '₹34,100.00', status: 'Pending Review' }
+];
 
 export default function VendorStatistics() {
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [refreshKey, setRefreshKey] = useState(0);
-
-  // Top Key Metrics
-  const vendorStats = [
-    { 
-      label: 'Total Active Vendors', 
-      value: '248', 
-      change: '+12.5%', 
-      up: true,
-      accentColor: 'bg-emerald-600',
-      iconBg: 'bg-emerald-50 text-emerald-700',
-      tagColor: 'text-emerald-700 bg-emerald-50/80 border-emerald-200/80',
-      icon: Store
-    },
-    { 
-      label: 'Avg Vendor Rating', 
-      value: '4.85', 
-      change: '+0.4%', 
-      up: true,
-      accentColor: 'bg-teal-600',
-      iconBg: 'bg-teal-50 text-teal-700',
-      tagColor: 'text-teal-700 bg-teal-50/80 border-teal-200/80',
-      icon: Star
-    },
-    { 
-      label: 'Total Orders Handled', 
-      value: '18,420', 
-      change: '+22.1%', 
-      up: true,
-      accentColor: 'bg-emerald-500',
-      iconBg: 'bg-emerald-50 text-emerald-700',
-      tagColor: 'text-emerald-700 bg-emerald-50/80 border-emerald-200/80',
-      icon: ShoppingBag
-    },
-    { 
-      label: 'Order Fulfillment Rate', 
-      value: '96.8%', 
-      change: '-0.5%', 
-      up: false,
-      accentColor: 'bg-green-700',
-      iconBg: 'bg-green-50 text-green-700',
-      tagColor: 'text-rose-700 bg-rose-50/80 border-rose-200/80',
-      icon: Users
-    }
-  ];
-
-  // Category Breakdown
-  const vendorCategories = [
-    { source: 'Organic Produce', amount: '112 Vendors', share: '45.1%', status: 'Active', trendUp: true, percentage: 45.1 },
-    { source: 'Dairy & Poultry', amount: '58 Vendors', share: '23.3%', status: 'Growing', trendUp: true, percentage: 23.3 },
-    { source: 'Hydroponics & Exotic', amount: '42 Vendors', share: '16.9%', status: 'Stable', trendUp: false, percentage: 16.9 },
-    { source: 'Herbs & Spices', amount: '36 Vendors', share: '14.7%', status: 'Stable', trendUp: true, percentage: 14.7 }
-  ];
-
-  // Vendor Performance Table Data
-  const topVendors = [
-    { id: 'VND-1021', name: 'Organic Valley Farms', category: 'Organic Produce', orders: '1,420', rating: '4.9', sales: '₹1,24,800.00', status: 'Active' },
-    { id: 'VND-1022', name: 'Greenhouse Co-op', category: 'Hydroponics', orders: '980', rating: '4.8', sales: '₹83,205.00', status: 'Active' },
-    { id: 'VND-1023', name: 'Sunshine Orchards', category: 'Fruits', orders: '1,150', rating: '4.7', sales: '₹1,51,000.00', status: 'Active' },
-    { id: 'VND-1024', name: 'Purely Plants Co.', category: 'Herbs & Spices', orders: '410', rating: '4.5', sales: '₹48,900.00', status: 'Pending Review' },
-    { id: 'VND-1025', name: 'Evergreen Hydroponics', category: 'Hydroponics', orders: '870', rating: '4.9', sales: '₹91,500.00', status: 'Active' },
-    { id: 'VND-1026', name: 'Valley Herbals LLC', category: 'Herbs', orders: '310', rating: '4.6', sales: '₹34,100.00', status: 'Pending Review' }
-  ];
 
   const handleRefresh = () => {
     setIsRefreshing(true);
-    setRefreshKey((prev) => prev + 1);
     setTimeout(() => {
       setIsRefreshing(false);
-    }, 1000);
+    }, 250);
   };
 
   return (
@@ -113,7 +104,7 @@ export default function VendorStatistics() {
 
         {/* Stats Grid */}
         <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
-          {vendorStats.map((stat, idx) => {
+          {VENDOR_STATS.map((stat, idx) => {
             const IconComponent = stat.icon;
             return (
               <div 
@@ -135,7 +126,7 @@ export default function VendorStatistics() {
                   </div>
                   
                   <h3 className="text-2xl sm:text-3xl font-semibold text-black tracking-tight font-mono group-hover:text-emerald-800">
-                    <AnimatedValue value={stat.value} key={refreshKey} />
+                    {stat.value}
                   </h3>
                 </div>
                 
@@ -174,7 +165,7 @@ export default function VendorStatistics() {
               </div>
               
               <div className="space-y-4">
-                {vendorCategories.map((category, idx) => (
+                {VENDOR_CATEGORIES.map((category, idx) => (
                   <div 
                     key={idx}
                     className="p-4 rounded-2xl border border-slate-200/70 bg-slate-50/50 hover:bg-white hover:border-emerald-200 transition-colors group cursor-pointer"
@@ -246,7 +237,7 @@ export default function VendorStatistics() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100">
-                    {topVendors.map((vendor, idx) => (
+                    {TOP_VENDORS.map((vendor, idx) => (
                       <tr 
                         key={idx}
                         className="text-xs font-semibold text-black hover:bg-emerald-50/40 group cursor-pointer"
@@ -278,7 +269,7 @@ export default function VendorStatistics() {
 
               {/* Mobile Card List View */}
               <div className="md:hidden space-y-3">
-                {topVendors.map((vendor, idx) => (
+                {TOP_VENDORS.map((vendor, idx) => (
                   <div 
                     key={idx}
                     className="p-4 rounded-2xl border border-slate-200 bg-slate-50/40 space-y-3 group cursor-pointer"

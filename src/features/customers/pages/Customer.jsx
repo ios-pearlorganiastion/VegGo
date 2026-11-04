@@ -368,37 +368,30 @@ export default function Customer({ embedded = false }) {
         setLoading(false);
       }
     },
-    [activeCustomerTab, searchQuery, pageSize, isBlockedFilter, sortOrder]
+    [pageSize]
   );
 
-  const isFirstSearchRef = useRef(true);
+  const [debouncedSearch, setDebouncedSearch] = useState('');
 
   // Debounced search query watcher
   useEffect(() => {
-    if (isFirstSearchRef.current) {
-      isFirstSearchRef.current = false;
-      fetchCustomerData(
-        activeCustomerTab,
-        0,
-        searchQuery,
-        isBlockedFilter,
-        sortOrder
-      );
-      return;
-    }
-
     const timer = setTimeout(() => {
-      fetchCustomerData(
-        activeCustomerTab,
-        0,
-        searchQuery,
-        isBlockedFilter,
-        sortOrder
-      );
+      setDebouncedSearch(searchQuery.trim());
     }, 350);
 
     return () => clearTimeout(timer);
-  }, [searchQuery, activeCustomerTab, fetchCustomerData, isBlockedFilter, sortOrder]);
+  }, [searchQuery]);
+
+  // Fetch immediately when tab, debounced search, or filters change
+  useEffect(() => {
+    fetchCustomerData(
+      activeCustomerTab,
+      0,
+      debouncedSearch,
+      isBlockedFilter,
+      sortOrder
+    );
+  }, [activeCustomerTab, debouncedSearch, isBlockedFilter, sortOrder, fetchCustomerData]);
 
   // Tab switch handler
   const handleTabChange = (tabId) => {
@@ -750,7 +743,7 @@ export default function Customer({ embedded = false }) {
           >
             <Download
               size={15}
-              className={isExportingCsv ? "animate-bounce" : ""}
+              className={isExportingCsv ? "text-emerald-200" : ""}
             />
             <span>{isExportingCsv ? "Exporting..." : "Export CSV"}</span>
           </button>

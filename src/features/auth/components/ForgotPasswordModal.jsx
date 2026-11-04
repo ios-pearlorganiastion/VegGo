@@ -12,7 +12,7 @@ function ForgotPasswordModal({ isOpen, onClose }) {
     setTimeout(() => {
       setIsLoading(false);
       setIsSent(true);
-    }, 2000);
+    }, 200);
   };
 
   if (!isOpen) return null;

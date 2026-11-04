@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState, useMemo } from 'react';
 import Sidebar from '../../../layouts/Sidebar';
 import PageHeader from '../../../components/common/PageHeader';
 import { 
@@ -7,7 +7,6 @@ import {
   Plus, 
   Shield, 
   ShieldAlert, 
-  Activity, 
   Mail, 
   MapPin, 
   SlidersHorizontal,
@@ -16,83 +15,86 @@ import {
   CheckCircle2
 } from 'lucide-react';
 
+const OPERATORS = [
+  {
+    id: '#OP-9012',
+    name: 'John Doe',
+    email: 'j.doe@veggofresh.com',
+    role: 'Primary Director',
+    status: 'Active',
+    zone: 'All Facilities',
+    lastActive: 'Just now',
+    securityLevel: 'Tier 1 Admin',
+    initials: 'JD',
+    activity: 'Adjusted thermal bounds for Cold Room B'
+  },
+  {
+    id: '#OP-4412',
+    name: 'Sarah Jenkins',
+    email: 's.jenkins@veggofresh.com',
+    role: 'Cold Room Manager',
+    status: 'Active',
+    zone: 'Zone A & B',
+    lastActive: '4 mins ago',
+    securityLevel: 'Tier 2 Manager',
+    initials: 'SJ',
+    activity: 'Logged daily ambient temperature audits'
+  },
+  {
+    id: '#OP-3310',
+    name: 'Marcus Vance',
+    email: 'm.vance@veggofresh.com',
+    role: 'Logistics Supervisor',
+    status: 'On Break',
+    zone: 'Dispatch Terminal',
+    lastActive: '32 mins ago',
+    securityLevel: 'Tier 2 Manager',
+    initials: 'MV',
+    activity: 'Authorized dispatch for Green Grocers Inc.'
+  },
+  {
+    id: '#OP-1108',
+    name: 'Elena Rostova',
+    email: 'e.rostova@veggofresh.com',
+    role: 'Inbound Specialist',
+    status: 'Active',
+    zone: 'Loading Docks',
+    lastActive: '12 mins ago',
+    securityLevel: 'Tier 3 Operator',
+    initials: 'ER',
+    activity: 'Registered incoming batch of Sweet Potatoes'
+  },
+  {
+    id: '#OP-8890',
+    name: 'David Kim',
+    email: 'd.kim@veggofresh.com',
+    role: 'Compliance Inspector',
+    status: 'Offline',
+    zone: 'Quality Labs',
+    lastActive: '2 hours ago',
+    securityLevel: 'Tier 2 Auditor',
+    initials: 'DK',
+    activity: 'Completed weekly biological safety review'
+  }
+];
+
+const ROLES_LIST = ['All', 'Primary Director', 'Cold Room Manager', 'Logistics Supervisor', 'Inbound Specialist', 'Compliance Inspector'];
+
 export default function OperatorRoles() {
-  const [currentTab, setCurrentTab] = useState('team');
   const [searchQuery, setSearchQuery] = useState('');
   const [roleFilter, setRoleFilter] = useState('All');
 
-  const operators = [
-    {
-      id: '#OP-9012',
-      name: 'John Doe',
-      email: 'j.doe@veggofresh.com',
-      role: 'Primary Director',
-      status: 'Active',
-      zone: 'All Facilities',
-      lastActive: 'Just now',
-      securityLevel: 'Tier 1 Admin',
-      initials: 'JD',
-      activity: 'Adjusted thermal bounds for Cold Room B'
-    },
-    {
-      id: '#OP-4412',
-      name: 'Sarah Jenkins',
-      email: 's.jenkins@veggofresh.com',
-      role: 'Cold Room Manager',
-      status: 'Active',
-      zone: 'Zone A & B',
-      lastActive: '4 mins ago',
-      securityLevel: 'Tier 2 Manager',
-      initials: 'SJ',
-      activity: 'Logged daily ambient temperature audits'
-    },
-    {
-      id: '#OP-3310',
-      name: 'Marcus Vance',
-      email: 'm.vance@veggofresh.com',
-      role: 'Logistics Supervisor',
-      status: 'On Break',
-      zone: 'Dispatch Terminal',
-      lastActive: '32 mins ago',
-      securityLevel: 'Tier 2 Manager',
-      initials: 'MV',
-      activity: 'Authorized dispatch for Green Grocers Inc.'
-    },
-    {
-      id: '#OP-1108',
-      name: 'Elena Rostova',
-      email: 'e.rostova@veggofresh.com',
-      role: 'Inbound Specialist',
-      status: 'Active',
-      zone: 'Loading Docks',
-      lastActive: '12 mins ago',
-      securityLevel: 'Tier 3 Operator',
-      initials: 'ER',
-      activity: 'Registered incoming batch of Sweet Potatoes'
-    },
-    {
-      id: '#OP-8890',
-      name: 'David Kim',
-      email: 'd.kim@veggofresh.com',
-      role: 'Compliance Inspector',
-      status: 'Offline',
-      zone: 'Quality Labs',
-      lastActive: '2 hours ago',
-      securityLevel: 'Tier 2 Auditor',
-      initials: 'DK',
-      activity: 'Completed weekly biological safety review'
-    }
-  ];
-
-  const rolesList = ['All', 'Primary Director', 'Cold Room Manager', 'Logistics Supervisor', 'Inbound Specialist', 'Compliance Inspector'];
-
-  const filteredOperators = operators.filter((op) => {
-    const matchesSearch = op.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                          op.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          op.id.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesRole = roleFilter === 'All' || op.role === roleFilter;
-    return matchesSearch && matchesRole;
-  });
+  const filteredOperators = useMemo(() => {
+    const q = searchQuery.toLowerCase().trim();
+    return OPERATORS.filter((op) => {
+      const matchesSearch = !q ||
+        op.name.toLowerCase().includes(q) || 
+        op.email.toLowerCase().includes(q) ||
+        op.id.toLowerCase().includes(q);
+      const matchesRole = roleFilter === 'All' || op.role === roleFilter;
+      return matchesSearch && matchesRole;
+    });
+  }, [searchQuery, roleFilter]);
 
   return (
     <div className="min-h-dvh bg-slate-100/70 flex flex-col lg:flex-row font-sans antialiased text-slate-800">
@@ -162,7 +164,7 @@ export default function OperatorRoles() {
                 onChange={(e) => setRoleFilter(e.target.value)}
                 className="bg-white border border-slate-200 text-xs sm:text-sm font-bold text-slate-700 px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all max-w-[200px] truncate"
               >
-                {rolesList.map((role) => (
+                {ROLES_LIST.map((role) => (
                   <option key={role} value={role}>{role}</option>
                 ))}
               </select>

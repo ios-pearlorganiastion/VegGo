@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useCallback, useMemo } from 'react';
+import React, { useEffect, useRef, useState, useCallback, useMemo, lazy, Suspense } from 'react';
 import { useLocation, useSearchParams } from 'react-router-dom';
 import Sidebar from '../../../layouts/Sidebar';
 import PageHeader from '../../../components/common/PageHeader';
@@ -6,9 +6,10 @@ import SegmentedTabs from '../../../components/common/SegmentedTabs';
 import StatusFilterPills from '../../../components/common/StatusFilterPills';
 import WorkflowRulesBar from '../../../components/common/WorkflowRulesBar';
 import EmptyState from '../../../components/common/EmptyState';
-import Categories from './Categories';
-import Subcategories from './Subcategories';
 import InfiniteScrollFooter from '../components/InfiniteScrollFooter';
+
+const Categories = lazy(() => import('./Categories'));
+const Subcategories = lazy(() => import('./Subcategories'));
 import {
   UI_TABLE,
   UI_BADGES,
@@ -16,8 +17,6 @@ import {
 } from '../../../constants/ui.constants';
 
 import {
-  Calendar,
-  RefreshCw,
   Search,
   Filter,
   Plus,
@@ -30,13 +29,7 @@ import {
   Loader2,
   Power,
   PowerOff,
-  ArrowUpRight,
-  ArrowDownRight,
-  Sparkles,
-  Zap,
   ChevronDown,
-  ChevronLeft,
-  ChevronRight,
   Check,
   Image,
   Upload,
@@ -766,13 +759,18 @@ export default function Products({ defaultTab = 'products' }) {
   const location = useLocation();
 
   const isFirstSearchRef = useRef(true);
+  const productsLoadedRef = useRef(false);
 
   useEffect(() => {
-    fetchProducts(0, '');
-    fetchCategoriesList();
-  }, []);
+    if (currentTab === 'products' && !productsLoadedRef.current) {
+      productsLoadedRef.current = true;
+      fetchProducts(0, '');
+      fetchCategoriesList();
+    }
+  }, [currentTab]);
 
   useEffect(() => {
+    if (currentTab !== 'products') return;
     if (isFirstSearchRef.current) {
       isFirstSearchRef.current = false;
       return;
@@ -782,7 +780,7 @@ export default function Products({ defaultTab = 'products' }) {
     }, 350);
 
     return () => clearTimeout(timer);
-  }, [searchQuery]);
+  }, [searchQuery, currentTab]);
 
   useEffect(() => {
     if (location.state?.productId && products.length > 0) {
@@ -1723,14 +1721,18 @@ export default function Products({ defaultTab = 'products' }) {
         {/* Tab 2: Categories View */}
         {currentTab === 'categories' && (
           <div className="w-full">
-            <Categories embedded={true} />
+            <Suspense fallback={<div className="py-16 text-center text-slate-400 font-semibold text-xs">Loading categories...</div>}>
+              <Categories embedded={true} />
+            </Suspense>
           </div>
         )}
 
         {/* Tab 3: Subcategories View */}
         {currentTab === 'subcategories' && (
           <div className="w-full">
-            <Subcategories embedded={true} />
+            <Suspense fallback={<div className="py-16 text-center text-slate-400 font-semibold text-xs">Loading subcategories...</div>}>
+              <Subcategories embedded={true} />
+            </Suspense>
           </div>
         )}
       </main>

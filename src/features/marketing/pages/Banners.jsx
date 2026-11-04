@@ -468,12 +468,17 @@ export default function Banners() {
   }, [successMessage]);
 
   // local preview URL for the picked file (revoked on change/unmount)
-  const imagePreview = useMemo(() => (imageFile ? URL.createObjectURL(imageFile) : ''), [imageFile]);
+  const [imagePreview, setImagePreview] = useState('');
 
   useEffect(() => {
-    if (!imagePreview) return undefined;
-    return () => URL.revokeObjectURL(imagePreview);
-  }, [imagePreview]);
+    if (!imageFile) {
+      setImagePreview('');
+      return undefined;
+    }
+    const url = URL.createObjectURL(imageFile);
+    setImagePreview(url);
+    return () => URL.revokeObjectURL(url);
+  }, [imageFile]);
 
   const loadBanners = useCallback(async () => {
     const requestId = ++requestIdRef.current;
@@ -648,7 +653,7 @@ export default function Banners() {
     }
   };
 
-  const handleToggle = async (banner) => {
+  const handleToggle = useCallback(async (banner) => {
     setActionLoading(banner.id);
     setErrorMessage('');
 
@@ -666,7 +671,7 @@ export default function Banners() {
     } finally {
       setActionLoading(null);
     }
-  };
+  }, []);
 
   const handleDelete = async () => {
     if (!deleteTarget) return;

@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Sidebar from '../../../layouts/Sidebar';
 import PageHeader from '../../../components/common/PageHeader';
 import {
-  Settings as SettingsIcon,
   Truck,
   IndianRupee,
   Clock,
@@ -11,17 +10,12 @@ import {
   Loader2,
   CheckCircle2,
   AlertCircle,
-  RefreshCw,
-  Zap,
-  Sparkles,
   ShieldCheck,
   Timer,
-  Layers,
   Info,
   Check,
   Sliders,
   Database,
-  ArrowRight,
   X
 } from 'lucide-react';
 
@@ -190,7 +184,6 @@ export default function Settings() {
   const [ceilings, setCeilings] = useState(DEFAULT_CEILINGS);
   const [updatedAt, setUpdatedAt] = useState(null);
   const [isLiveApi, setIsLiveApi] = useState(false);
-  const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
@@ -249,10 +242,8 @@ export default function Settings() {
     }
   };
 
-  const loadSettings = async (showFullLoader = true) => {
+  const loadSettings = async () => {
     try {
-      if (showFullLoader) setLoading(true);
-
       // Fetch live configuration from backend GET /api/admin/settings
       const response = await getPlatformSettings();
 
@@ -269,13 +260,11 @@ export default function Settings() {
       // Graceful fallback to default values
       setSettings(getInitialValues());
       setIsLiveApi(false);
-    } finally {
-      if (showFullLoader) setLoading(false);
     }
   };
 
   useEffect(() => {
-    loadSettings(true);
+    loadSettings();
   }, []);
 
   const handleRefresh = async () => {
@@ -374,8 +363,6 @@ export default function Settings() {
       setSaving(true);
       setSaveSuccess(false);
 
-      const startTime = Date.now();
-
       // Clean payload strictly matching backend PUT /api/admin/settings schema
       const payload = {
         deliveryRadiusKm: Number(settings.deliveryRadiusKm),
@@ -397,12 +384,6 @@ export default function Settings() {
 
       // Synchronize with server PUT /api/admin/settings
       const response = await updatePlatformSettings(payload);
-
-      // Ensure minimum 500ms processing delay so user sees tactile feedback
-      const elapsed = Date.now() - startTime;
-      if (elapsed < 500) {
-        await new Promise((resolve) => setTimeout(resolve, 500 - elapsed));
-      }
 
       if (response?.success) {
         if (response?.data) {

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState, memo } from 'react';
 import {
   Ticket,
   Plus,
@@ -204,7 +204,7 @@ const describeOffer = (f) => {
   return `${formatMoney(value)} off${min}`;
 };
 
-function CopyCodeButton({ code }) {
+const CopyCodeButton = memo(function CopyCodeButton({ code }) {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async () => {
@@ -227,9 +227,9 @@ function CopyCodeButton({ code }) {
       {copied ? <Check size={13} className="text-emerald-600" /> : <Copy size={13} />}
     </button>
   );
-}
+});
 
-function OfferCell({ coupon }) {
+const OfferCell = memo(function OfferCell({ coupon }) {
   const isPercent = coupon.discountType === 'PERCENT';
 
   return (
@@ -245,9 +245,9 @@ function OfferCell({ coupon }) {
       </span>
     </div>
   );
-}
+});
 
-function UsageCell({ coupon }) {
+const UsageCell = memo(function UsageCell({ coupon }) {
   return (
     <div className="flex flex-col gap-0.5 text-[11px] font-medium text-slate-600">
       <span>
@@ -263,9 +263,9 @@ function UsageCell({ coupon }) {
       <span>{coupon.customersCount ?? 0} customers</span>
     </div>
   );
-}
+});
 
-function RulesCell({ coupon }) {
+const RulesCell = memo(function RulesCell({ coupon }) {
   return (
     <div className="flex flex-col gap-0.5 text-[11px] font-medium text-slate-600">
       <span>{AUDIENCE_LABELS[coupon.audience] || coupon.audience}</span>
@@ -279,9 +279,9 @@ function RulesCell({ coupon }) {
       </span>
     </div>
   );
-}
+});
 
-function ActionButtons({ coupon, busy, onEdit, onToggle, onDelete, onRedemptions, isMobile = false }) {
+const ActionButtons = memo(function ActionButtons({ coupon, busy, onEdit, onToggle, onDelete, onRedemptions, isMobile = false }) {
   if (isMobile) {
     return (
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2.5 border-t border-slate-100">
@@ -397,7 +397,7 @@ function ActionButtons({ coupon, busy, onEdit, onToggle, onDelete, onRedemptions
       </button>
     </div>
   );
-}
+});
 
 export default function Coupons() {
   const [coupons, setCoupons] = useState([]);

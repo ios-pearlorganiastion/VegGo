@@ -1,123 +1,125 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import Sidebar from '../../../layouts/Sidebar';
 import PageHeader from '../../../components/common/PageHeader';
 import { 
-  Calendar, 
-  RefreshCw, 
   ShieldAlert, 
   Thermometer, 
   Droplet, 
   Wind, 
-  CheckCircle2,
-  Cpu,
-  AlertTriangle,
-  Radio
+  CheckCircle2, 
+  Cpu, 
+  Radio 
 } from 'lucide-react';
 
+const facilities = [
+  { 
+    id: 'CR-1', 
+    name: 'Primary Cold Room 1', 
+    temp: '3.8 °C', 
+    humidity: '88%', 
+    status: 'Optimized', 
+    type: 'Storage Room',
+    gradient: 'from-emerald-500 to-teal-400',
+    tagColor: 'bg-emerald-50 text-emerald-700 border-emerald-200'
+  },
+  { 
+    id: 'CR-2', 
+    name: 'Secondary Cold Room 2', 
+    temp: '4.1 °C', 
+    humidity: '85%', 
+    status: 'Optimized', 
+    type: 'Storage Room',
+    gradient: 'from-emerald-500 to-teal-400',
+    tagColor: 'bg-emerald-50 text-emerald-700 border-emerald-200'
+  },
+  { 
+    id: 'FZ-1', 
+    name: 'Deep Freezer Alpha', 
+    temp: '-18.5 °C', 
+    humidity: '92%', 
+    status: 'Optimized', 
+    type: 'Deep Freeze',
+    gradient: 'from-cyan-500 to-blue-500',
+    tagColor: 'bg-cyan-50 text-cyan-700 border-cyan-200'
+  },
+  { 
+    id: 'TR-12', 
+    name: 'Transit Unit Cargo 12', 
+    temp: '5.2 °C', 
+    humidity: '80%', 
+    status: 'Warning', 
+    type: 'Reefer Truck',
+    gradient: 'from-amber-500 to-orange-400',
+    tagColor: 'bg-amber-50 text-amber-700 border-amber-200'
+  },
+  { 
+    id: 'TR-08', 
+    name: 'Transit Unit Cargo 08', 
+    temp: '4.0 °C', 
+    humidity: '82%', 
+    status: 'Optimized', 
+    type: 'Reefer Truck',
+    gradient: 'from-emerald-500 to-teal-400',
+    tagColor: 'bg-emerald-50 text-emerald-700 border-emerald-200'
+  },
+  { 
+    id: 'CR-3', 
+    name: 'Holding Facility Room 3', 
+    temp: '9.5 °C', 
+    humidity: '64%', 
+    status: 'Critical', 
+    type: 'Holding Bay',
+    gradient: 'from-rose-500 to-red-500',
+    tagColor: 'bg-rose-50 text-rose-700 border-rose-200'
+  }
+];
+
+const coreMetrics = [
+  { 
+    label: 'Active Cooling Nodes', 
+    value: '14 / 15 Online', 
+    alert: false,
+    icon: Cpu,
+    iconBg: 'bg-sky-50 text-sky-700 border-sky-200/80',
+    gradient: 'from-sky-500 via-blue-400 to-cyan-400',
+    note: '93.3% Network Uptime'
+  },
+  { 
+    label: 'Facility Avg Humidity', 
+    value: '81.5%', 
+    alert: false,
+    icon: Droplet,
+    iconBg: 'bg-teal-50 text-teal-700 border-teal-200/80',
+    gradient: 'from-teal-500 via-emerald-400 to-cyan-400',
+    note: 'Optimal Produce Range'
+  },
+  { 
+    label: 'Thermal Safety Index', 
+    value: '98.2%', 
+    alert: false,
+    icon: CheckCircle2,
+    iconBg: 'bg-emerald-50 text-emerald-700 border-emerald-200/80',
+    gradient: 'from-emerald-500 via-teal-400 to-emerald-400',
+    note: 'ISO Compliant'
+  },
+  { 
+    label: 'Anomalies Flagged', 
+    value: '1 Node Out of Range', 
+    alert: true,
+    icon: ShieldAlert,
+    iconBg: 'bg-rose-50 text-rose-700 border-rose-200/80',
+    gradient: 'from-rose-500 via-amber-400 to-rose-400',
+    note: 'CR-3 Holding Bay'
+  }
+];
+
 export default function ColdChain() {
-  const [currentTab, setCurrentTab] = useState('logistics');
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
-  const facilities = [
-    { 
-      id: 'CR-1', 
-      name: 'Primary Cold Room 1', 
-      temp: '3.8 °C', 
-      humidity: '88%', 
-      status: 'Optimized', 
-      type: 'Storage Room',
-      gradient: 'from-emerald-500 to-teal-400',
-      tagColor: 'bg-emerald-50 text-emerald-700 border-emerald-200'
-    },
-    { 
-      id: 'CR-2', 
-      name: 'Secondary Cold Room 2', 
-      temp: '4.1 °C', 
-      humidity: '85%', 
-      status: 'Optimized', 
-      type: 'Storage Room',
-      gradient: 'from-emerald-500 to-teal-400',
-      tagColor: 'bg-emerald-50 text-emerald-700 border-emerald-200'
-    },
-    { 
-      id: 'FZ-1', 
-      name: 'Deep Freezer Alpha', 
-      temp: '-18.5 °C', 
-      humidity: '92%', 
-      status: 'Optimized', 
-      type: 'Deep Freeze',
-      gradient: 'from-cyan-500 to-blue-500',
-      tagColor: 'bg-cyan-50 text-cyan-700 border-cyan-200'
-    },
-    { 
-      id: 'TR-12', 
-      name: 'Transit Unit Cargo 12', 
-      temp: '5.2 °C', 
-      humidity: '80%', 
-      status: 'Warning', 
-      type: 'Reefer Truck',
-      gradient: 'from-amber-500 to-orange-400',
-      tagColor: 'bg-amber-50 text-amber-700 border-amber-200'
-    },
-    { 
-      id: 'TR-08', 
-      name: 'Transit Unit Cargo 08', 
-      temp: '4.0 °C', 
-      humidity: '82%', 
-      status: 'Optimized', 
-      type: 'Reefer Truck',
-      gradient: 'from-emerald-500 to-teal-400',
-      tagColor: 'bg-emerald-50 text-emerald-700 border-emerald-200'
-    },
-    { 
-      id: 'CR-3', 
-      name: 'Holding Facility Room 3', 
-      temp: '9.5 °C', 
-      humidity: '64%', 
-      status: 'Critical', 
-      type: 'Holding Bay',
-      gradient: 'from-rose-500 to-red-500',
-      tagColor: 'bg-rose-50 text-rose-700 border-rose-200'
-    }
-  ];
-
-  const coreMetrics = [
-    { 
-      label: 'Active Cooling Nodes', 
-      value: '14 / 15 Online', 
-      alert: false,
-      icon: Cpu,
-      iconBg: 'bg-sky-50 text-sky-700 border-sky-200/80',
-      gradient: 'from-sky-500 via-blue-400 to-cyan-400',
-      note: '93.3% Network Uptime'
-    },
-    { 
-      label: 'Facility Avg Humidity', 
-      value: '81.5%', 
-      alert: false,
-      icon: Droplet,
-      iconBg: 'bg-teal-50 text-teal-700 border-teal-200/80',
-      gradient: 'from-teal-500 via-emerald-400 to-cyan-400',
-      note: 'Optimal Produce Range'
-    },
-    { 
-      label: 'Thermal Safety Index', 
-      value: '98.2%', 
-      alert: false,
-      icon: CheckCircle2,
-      iconBg: 'bg-emerald-50 text-emerald-700 border-emerald-200/80',
-      gradient: 'from-emerald-500 via-teal-400 to-emerald-400',
-      note: 'ISO Compliant'
-    },
-    { 
-      label: 'Anomalies Flagged', 
-      value: '1 Node Out of Range', 
-      alert: true,
-      icon: ShieldAlert,
-      iconBg: 'bg-rose-50 text-rose-700 border-rose-200/80',
-      gradient: 'from-rose-500 via-amber-400 to-rose-400',
-      note: 'CR-3 Holding Bay'
-    }
-  ];
+  const handleRefresh = () => {
+    setIsRefreshing(true);
+    setTimeout(() => setIsRefreshing(false), 300);
+  };
 
   return (
     <div className="min-h-dvh bg-slate-100/70 flex flex-col lg:flex-row font-sans antialiased text-slate-800">
@@ -129,7 +131,8 @@ export default function ColdChain() {
           badgeIcon={Thermometer}
           title="Cold Chain Telemetry"
           subtitle="Real-time thermal tracking, refrigeration chambers, and transit cargo environmental status."
-          onRefresh={() => window.location.reload()}
+          onRefresh={handleRefresh}
+          isRefreshing={isRefreshing}
         />
 
         {/* 4 Multi-Color Metric Cards */}

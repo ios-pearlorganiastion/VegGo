@@ -331,7 +331,7 @@ function Sidebar() {
                   onClick={() => setIsProfileOpen(false)}
                   className="fixed inset-0 z-40"
                 />
-                <div className="absolute right-0 mt-2 w-56 bg-white rounded-2xl shadow-2xl border border-slate-200 py-2 z-50 text-slate-800 animate-in fade-in zoom-in-95 duration-150">
+                <div className="absolute right-0 mt-2 w-56 bg-white rounded-2xl shadow-2xl border border-slate-200 py-2 z-50 text-slate-800">
                   <div className="px-4 py-2.5 border-b border-slate-100">
                     <p className="text-xs font-bold text-slate-900">Administrator</p>
                     <p className="text-[11px] text-slate-500 truncate">admin@veggofresh.com</p>
@@ -379,7 +379,7 @@ function Sidebar() {
 
       {/* 2. Fixed Left Sidebar with Sign-In Light Aesthetic */}
       <aside
-        className={`fixed top-16 left-0 bottom-0 z-40 bg-white/95 backdrop-blur-2xl border-r border-emerald-100/90 text-slate-800 flex flex-col transition-all duration-300 ease-out shadow-sm lg:translate-x-0 ${
+        className={`fixed top-16 left-0 bottom-0 z-40 bg-white/95 backdrop-blur-2xl border-r border-emerald-100/90 text-slate-800 flex flex-col transition-all duration-150 ease-out shadow-sm lg:translate-x-0 ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         } ${isEffectiveCollapsed ? "w-20" : "w-72 max-w-[85vw] lg:w-64"}`}
       >
@@ -505,7 +505,7 @@ function Sidebar() {
                 {/* Submenu Accordion when Expanded */}
                 {!isEffectiveCollapsed && group.subItems.length > 0 && (
                   <div
-                    className={`ml-5 pl-3 border-l-2 border-emerald-200/80 space-y-1 my-1 transition-all duration-300 ease-in-out overflow-hidden ${
+                    className={`ml-5 pl-3 border-l-2 border-emerald-200/80 space-y-1 my-1 transition-all duration-150 ease-in-out overflow-hidden ${
                       isExpanded
                         ? "max-h-96 opacity-100 py-1"
                         : "max-h-0 opacity-0 pointer-events-none"
@@ -557,7 +557,7 @@ function Sidebar() {
 
       {/* 3. Desktop Column Spacer */}
       <div
-        className="hidden lg:block shrink-0 transition-all duration-300"
+        className="hidden lg:block shrink-0 transition-[width] duration-150"
         style={{ width: isEffectiveCollapsed ? "5rem" : "16rem" }}
       />
 

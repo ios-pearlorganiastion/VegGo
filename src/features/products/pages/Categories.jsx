@@ -830,6 +830,7 @@ export default function Categories({ embedded = false }) {
                                   src={category.imageUrl}
                                   alt={category.name || "Category"}
                                   className="w-full h-full object-cover"
+                                  loading="lazy"
                                   onError={(e) => {
                                     e.currentTarget.style.display = "none";
                                   }}
@@ -989,6 +990,7 @@ export default function Categories({ embedded = false }) {
                               src={category.imageUrl}
                               alt={category.name || "Category"}
                               className="w-full h-full object-cover"
+                              loading="lazy"
                             />
                           ) : (
                             <FolderTree size={16} />

@@ -246,7 +246,7 @@ export default function Delivery({ embedded = false }) {
         setIsRefreshing(false);
       }
     },
-    [activeTab, approvedFilter, onlineFilter, searchQuery]
+    [activeTab, approvedFilter, onlineFilter]
   );
 
   useEffect(() => {
@@ -587,7 +587,7 @@ export default function Delivery({ embedded = false }) {
               >
                 <Download
                   size={15}
-                  className={isExportingCsv ? "animate-bounce" : ""}
+                  className={isExportingCsv ? "text-emerald-200" : ""}
                 />
                 <span>{isExportingCsv ? "Exporting..." : "Export CSV"}</span>
               </button>

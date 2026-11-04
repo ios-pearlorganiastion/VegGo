@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, lazy, Suspense } from "react";
 import { useSearchParams } from "react-router-dom";
 import Sidebar from "../../../layouts/Sidebar";
 import SegmentedTabs from "../../../components/common/SegmentedTabs";
 import { Wallet as WalletIcon, TrendingUp } from "lucide-react";
-import Wallet from "./Wallet";
-import PayoutRequests from "./PayoutRequests";
+
+const Wallet = lazy(() => import("./Wallet"));
+const PayoutRequests = lazy(() => import("./PayoutRequests"));
 
 export default function Payouts({ defaultTab = "wallet" }) {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -46,8 +47,16 @@ export default function Payouts({ defaultTab = "wallet" }) {
 
         {/* Tab View Content */}
         <div className="w-full">
-          {activeTab === "wallet" && <Wallet embedded={true} />}
-          {activeTab === "payouts" && <PayoutRequests embedded={true} />}
+          {activeTab === "wallet" && (
+            <Suspense fallback={<div className="py-16 text-center text-slate-400 font-semibold text-xs">Loading wallet...</div>}>
+              <Wallet embedded={true} />
+            </Suspense>
+          )}
+          {activeTab === "payouts" && (
+            <Suspense fallback={<div className="py-16 text-center text-slate-400 font-semibold text-xs">Loading payout requests...</div>}>
+              <PayoutRequests embedded={true} />
+            </Suspense>
+          )}
         </div>
       </main>
     </div>

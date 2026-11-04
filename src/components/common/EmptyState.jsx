@@ -1,5 +1,5 @@
 import React from 'react';
-import { Users, FolderSearch } from 'lucide-react';
+import { Users } from 'lucide-react';
 
 function EmptyState({
   icon: Icon = Users,

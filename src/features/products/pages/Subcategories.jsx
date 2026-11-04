@@ -3,8 +3,6 @@ import Sidebar from '../../../layouts/Sidebar';
 import PageHeader from '../../../components/common/PageHeader';
 
 import {
-  Calendar,
-  RefreshCw,
   Search,
   Filter,
   Plus,
@@ -13,16 +11,11 @@ import {
   X,
   Save,
   CheckCircle2,
-  AlertTriangle,
   XCircle,
   Layers3,
   Loader2,
   Power,
   PowerOff,
-  ArrowUpRight,
-  ArrowDownRight,
-  Sparkles,
-  Zap,
   Upload,
   Image as ImageIcon,
   ChevronDown,
@@ -1326,6 +1319,7 @@ export default function Subcategories({ embedded = false }) {
                                   src={subcategory.imageUrl || subcategory.image}
                                   alt={subcategory.name}
                                   className="w-full h-full object-cover"
+                                  loading="lazy"
                                 />
                               ) : (
                                 <Layers3 size={17} className="text-emerald-600" />
@@ -1491,6 +1485,7 @@ export default function Subcategories({ embedded = false }) {
                               src={subcategory.imageUrl || subcategory.image}
                               alt={subcategory.name}
                               className="w-full h-full object-cover"
+                              loading="lazy"
                             />
                           ) : (
                             <Layers3 size={16} />
