@@ -345,7 +345,10 @@ export default function Wallet({ embedded = false }) {
                                 <ArrowUpRight size={16} />
                               )}
                             </div>
-                            <span className="truncate max-w-xs font-bold">
+                            <span
+                              className="max-w-xs font-bold line-clamp-2 wrap-break-word"
+                              title={String(getDescription(transaction))}
+                            >
                               {getDescription(transaction)}
                             </span>
                           </div>
@@ -459,7 +462,10 @@ export default function Wallet({ embedded = false }) {
                           )}
                         </div>
                         <div className="min-w-0">
-                          <h4 className="font-bold text-sm text-slate-900 truncate">
+                          <h4
+                            className="font-bold text-sm text-slate-900 line-clamp-2 wrap-break-word"
+                            title={String(getDescription(transaction))}
+                          >
                             {getDescription(transaction)}
                           </h4>
                           <span className="text-[10px] text-slate-400">

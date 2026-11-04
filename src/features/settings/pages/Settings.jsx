@@ -28,7 +28,7 @@ import {
    SAFE OPERATIONAL DEFAULTS & CEILINGS (MATCHING BACKEND)
 ========================================================= */
 const DEFAULT_SETTINGS = {
-  deliveryRadiusKm: 50,
+  deliveryRadiusKm: 10,
   platformFeeAmount: 100,
   deliveryFeeAmount: 100,
   vendorAcceptTimeoutSeconds: 60,
@@ -56,7 +56,7 @@ const SETTING_GROUPS = [
   {
     id: 'logistics',
     title: 'Logistics & Delivery Coverage',
-    subtitle: 'Control operational delivery boundary and base transport fee per drop',
+    subtitle: 'Service radius for partners, shops and checkout, plus the flat delivery fee per order',
     icon: Truck,
     badgeColor: 'bg-emerald-50 text-emerald-700 border-emerald-200/80',
     fields: [
@@ -68,19 +68,19 @@ const SETTING_GROUPS = [
         step: 0.5,
         min: 1,
         ceilingKey: 'maxDeliveryRadiusKm',
-        description: 'Maximum delivery coverage radial distance from vendor hub to customer.',
+        description: 'Maximum distance between a customer and a shop, and between a shop and a delivery partner.',
         presets: [5, 10, 15, 25],
       },
       {
         key: 'deliveryFeeAmount',
-        label: 'Base Customer Delivery Fee',
+        label: 'Delivery Fee (per order)',
         suffix: '₹',
         icon: IndianRupee,
         step: 1,
         min: 0,
         ceilingKey: 'maxDeliveryFeeAmount',
-        description: 'Fixed baseline delivery shipping fee charged to customers per order.',
-        presets: [15, 25, 35, 50],
+        description: 'Flat fee charged to the customer on every order and paid in full to the delivery partner.',
+        presets: [0, 15, 25, 35, 50],
       },
     ],
   },
@@ -149,7 +149,7 @@ const SETTING_GROUPS = [
   {
     id: 'finance_security',
     title: 'Platform Fee & OTP Security',
-    subtitle: 'Platform commission surcharge and customer authentication expiry',
+    subtitle: 'Flat platform fee charged per order and OTP authentication expiry',
     icon: ShieldCheck,
     badgeColor: 'bg-teal-50/80 text-teal-800 border-teal-200/80',
     fields: [
@@ -161,8 +161,8 @@ const SETTING_GROUPS = [
         step: 0.5,
         min: 0,
         ceilingKey: 'maxPlatformFeeAmount',
-        description: 'Fixed platform service convenience fee applied to checkout baskets.',
-        presets: [2, 5, 10, 15],
+        description: 'Flat fee charged to the customer on every order and credited to the platform wallet.',
+        presets: [0, 2, 5, 10, 15],
       },
       {
         key: 'otpExpiryMinutes',
@@ -428,7 +428,7 @@ export default function Settings() {
           badge="Platform Operations"
           badgeIcon={Sliders}
           title="System Settings"
-          subtitle="Configure delivery boundaries, SLA acceptance thresholds, dispatch escalation, and platform convenience fees."
+          subtitle="Configure delivery radius, SLA acceptance thresholds, dispatch escalation, and the delivery and platform fees used across every app."
           onRefresh={handleRefresh}
           isRefreshing={refreshing || saving}
         />
@@ -451,11 +451,10 @@ export default function Settings() {
               </div>
               <p className="text-xs text-slate-500 mt-0.5">
                 {isLiveApi
-                  ? `All parameters are synchronized directly with the production backend.${
-                      updatedAt
-                        ? ` (Last synced: ${new Date(updatedAt).toLocaleTimeString()})`
-                        : ''
-                    }`
+                  ? `All parameters are synchronized directly with the production backend.${updatedAt
+                    ? ` (Last synced: ${new Date(updatedAt).toLocaleTimeString()})`
+                    : ''
+                  }`
                   : 'Operating with certified safe defaults. Edits are saved locally until backend endpoint /api/admin/settings is deployed.'}
               </p>
             </div>
@@ -475,11 +474,10 @@ export default function Settings() {
               type="button"
               onClick={handleSave}
               disabled={saving}
-              className={`inline-flex items-center gap-2 px-5 py-2 rounded-xl text-xs font-bold text-white transition-all cursor-pointer shadow-sm ${
-                saveSuccess
+              className={`inline-flex items-center gap-2 px-5 py-2 rounded-xl text-xs font-bold text-white transition-all cursor-pointer shadow-sm ${saveSuccess
                   ? 'bg-emerald-600 hover:bg-emerald-700'
                   : 'bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700'
-              } disabled:opacity-60 disabled:cursor-not-allowed`}
+                } disabled:opacity-60 disabled:cursor-not-allowed`}
             >
               {saving ? (
                 <>
@@ -506,23 +504,21 @@ export default function Settings() {
           {toast && (
             <div
               key={toast.title + toast.desc}
-              className={`pointer-events-auto w-full bg-white/95 backdrop-blur-md rounded-2xl border shadow-2xl p-4 overflow-hidden relative ${
-                toast.type === 'error'
+              className={`pointer-events-auto w-full bg-white/95 backdrop-blur-md rounded-2xl border shadow-2xl p-4 overflow-hidden relative ${toast.type === 'error'
                   ? 'border-rose-200/90 shadow-rose-950/10'
                   : toast.type === 'info'
-                  ? 'border-sky-200/90 shadow-sky-950/10'
-                  : 'border-emerald-200/90 shadow-emerald-950/10'
-              }`}
+                    ? 'border-sky-200/90 shadow-sky-950/10'
+                    : 'border-emerald-200/90 shadow-emerald-950/10'
+                }`}
             >
               <div className="flex items-start gap-3">
                 <div
-                  className={`p-2 rounded-xl border shrink-0 ${
-                    toast.type === 'error'
+                  className={`p-2 rounded-xl border shrink-0 ${toast.type === 'error'
                       ? 'bg-rose-50 border-rose-200 text-rose-600'
                       : toast.type === 'info'
-                      ? 'bg-sky-50 border-sky-200 text-sky-600'
-                      : 'bg-emerald-50 border-emerald-200 text-emerald-600'
-                  }`}
+                        ? 'bg-sky-50 border-sky-200 text-sky-600'
+                        : 'bg-emerald-50 border-emerald-200 text-emerald-600'
+                    }`}
                 >
                   {toast.type === 'error' ? (
                     <AlertCircle size={18} />
@@ -554,13 +550,12 @@ export default function Settings() {
 
               {/* Progress Line */}
               <div
-                className={`absolute bottom-0 left-0 right-0 h-1 ${
-                  toast.type === 'error'
+                className={`absolute bottom-0 left-0 right-0 h-1 ${toast.type === 'error'
                     ? 'bg-rose-500'
                     : toast.type === 'info'
-                    ? 'bg-sky-500'
-                    : 'bg-emerald-500'
-                }`}
+                      ? 'bg-sky-500'
+                      : 'bg-emerald-500'
+                  }`}
               />
             </div>
           )}
@@ -677,7 +672,7 @@ export default function Settings() {
               Apply Platform Configuration
             </h3>
             <p className="text-xs text-slate-500">
-              Settings govern rider matching algorithms, vendor timeouts, and customer billing rules.
+              Fees apply to new orders only. Delivery radius applies immediately to customers, vendors and delivery partners.
             </p>
           </div>
 
@@ -693,11 +688,10 @@ export default function Settings() {
               type="button"
               onClick={handleSave}
               disabled={saving}
-              className={`inline-flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs font-bold text-white shadow-sm transition-all cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed ${
-                saveSuccess
+              className={`inline-flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs font-bold text-white shadow-sm transition-all cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed ${saveSuccess
                   ? 'bg-emerald-600 hover:bg-emerald-700'
                   : 'bg-emerald-600 hover:bg-emerald-700'
-              }`}
+                }`}
             >
               {saving ? (
                 <>
