@@ -45,6 +45,10 @@ export const DELIVERY_ENDPOINTS = Object.freeze({
   KYC_DETAIL: (deliveryPartnerUserId) => `/api/admin/delivery-partners/kyc/${deliveryPartnerUserId}`,
   KYC_APPROVE: (deliveryPartnerUserId) => `/api/admin/delivery-partners/kyc/${deliveryPartnerUserId}/approve`,
   KYC_REJECT: (deliveryPartnerUserId) => `/api/admin/delivery-partners/kyc/${deliveryPartnerUserId}/reject`,
+  CHANGE_REQUESTS: '/api/admin/delivery-partners/change-requests',
+  CHANGE_REQUEST_DETAIL: (requestId) => `/api/admin/delivery-partners/change-requests/${requestId}`,
+  CHANGE_REQUEST_APPROVE: (requestId) => `/api/admin/delivery-partners/change-requests/${requestId}/approve`,
+  CHANGE_REQUEST_REJECT: (requestId) => `/api/admin/delivery-partners/change-requests/${requestId}/reject`,
 });
 
 // Produce Catalog, Categories, and Subcategories

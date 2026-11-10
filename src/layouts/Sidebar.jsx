@@ -379,7 +379,7 @@ function Sidebar() {
 
       {/* 2. Fixed Left Sidebar with Sign-In Light Aesthetic */}
       <aside
-        className={`fixed top-16 left-0 bottom-0 z-40 bg-white/95 backdrop-blur-2xl border-r border-emerald-100/90 text-slate-800 flex flex-col transition-all duration-150 ease-out shadow-sm lg:translate-x-0 ${
+        className={`fixed top-16 left-0 bottom-0 z-40 bg-white/95 backdrop-blur-2xl border-r border-emerald-100/90 text-slate-800 flex flex-col transition-all duration-150 ease-out shadow-sm lg:translate-x-0 overflow-x-hidden ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         } ${isEffectiveCollapsed ? "w-20" : "w-72 max-w-[85vw] lg:w-64"}`}
       >
@@ -403,7 +403,13 @@ function Sidebar() {
         </div>
 
         {/* Navigation Items */}
-        <nav className={`flex-1 overflow-y-auto py-5 space-y-1.5 scrollbar-thin scrollbar-thumb-emerald-100 scrollbar-track-transparent ${isEffectiveCollapsed ? 'px-2' : 'px-3.5'}`}>
+        <nav
+          className={`flex-1 py-5 space-y-1.5 overflow-x-hidden ${
+            isEffectiveCollapsed
+              ? "px-2 overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+              : "px-3.5 overflow-y-auto scrollbar-thin scrollbar-thumb-emerald-100 scrollbar-track-transparent"
+          }`}
+        >
           {menuGroups.map((group) => {
             const isExpanded = expandedGroup === group.id;
 
@@ -426,6 +432,7 @@ function Sidebar() {
               <div key={group.id} className="relative group/item space-y-1">
                 <button
                   onClick={() => handleGroupToggle(group)}
+                  title={isEffectiveCollapsed ? group.label : undefined}
                   className={`w-full flex items-center rounded-2xl text-sm font-semibold transition-all duration-200 cursor-pointer ${
                     isEffectiveCollapsed
                       ? "justify-center p-3"
@@ -459,48 +466,6 @@ function Sidebar() {
                       <ChevronDown size={16} className={isSelected ? "text-emerald-700 shrink-0" : "text-slate-400 shrink-0"} />
                     ))}
                 </button>
-
-                {/* Floating Flyout Tooltip when Collapsed */}
-                {isEffectiveCollapsed && (
-                  <div className="absolute left-full top-0 ml-3 z-50 invisible group-hover/item:visible opacity-0 group-hover/item:opacity-100 transition-all duration-200 pointer-events-none group-hover/item:pointer-events-auto">
-                    <div className="bg-white rounded-2xl shadow-2xl border border-emerald-100 p-3 min-w-[190px] space-y-2 text-slate-800">
-                      <div className="flex items-center gap-2 pb-1.5 border-b border-slate-100">
-                        <GroupIcon size={15} className={group.color || "text-emerald-600"} />
-                        <span className="text-xs font-bold text-slate-900">{group.label}</span>
-                      </div>
-
-                      {group.subItems.length > 0 ? (
-                        <div className="space-y-1">
-                          {group.subItems.map((subItem) => {
-                            const isSubSelected = location.pathname === subItem.path;
-                            const SubIcon = subItem.icon;
-                            return (
-                              <button
-                                key={subItem.id}
-                                onClick={() => handleSubItemClick(subItem.path)}
-                                className={`w-full text-left px-2.5 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-2 transition-all cursor-pointer ${
-                                  isSubSelected
-                                    ? "bg-emerald-600 text-white font-bold shadow-xs"
-                                    : "text-slate-600 hover:text-emerald-700 hover:bg-emerald-50"
-                                }`}
-                              >
-                                <SubIcon size={14} className={isSubSelected ? "text-white" : (subItem.color || "text-emerald-600")} />
-                                {subItem.label}
-                              </button>
-                            );
-                          })}
-                        </div>
-                      ) : (
-                        <button
-                          onClick={() => handleSubItemClick(group.path)}
-                          className="w-full text-left px-2.5 py-1.5 rounded-xl text-xs font-semibold text-emerald-700 hover:bg-emerald-50 cursor-pointer"
-                        >
-                          Open {group.label}
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                )}
 
                 {/* Submenu Accordion when Expanded */}
                 {!isEffectiveCollapsed && group.subItems.length > 0 && (
@@ -541,7 +506,7 @@ function Sidebar() {
         </nav>
 
         {/* Footer Logout Button */}
-        <div className={`p-3.5 border-t border-slate-100 shrink-0`}>
+        <div className={`border-t border-slate-100 shrink-0 ${isEffectiveCollapsed ? 'p-2' : 'p-3.5'}`}>
           <button
             onClick={handleLogoutClick}
             className={`w-full flex items-center justify-center gap-2 rounded-2xl text-xs font-bold text-rose-600 bg-rose-50/80 hover:bg-rose-600 hover:text-white border border-rose-200/60 transition-all duration-200 cursor-pointer shadow-2xs hover:shadow-rose-600/20 ${
